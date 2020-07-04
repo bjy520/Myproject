@@ -1,0 +1,4 @@
+include ':mymoveimage'
+include ':mypiano'
+include ':app'
+rootProject.name = "MyProject"

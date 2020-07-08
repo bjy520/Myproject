@@ -67,9 +67,9 @@ public class SoudPoolsUtil {
             sounds.add(R.raw.a22);
             sounds.add(R.raw.a31);
             sounds.add(R.raw.a32);
-            sounds.add(R.raw.a76);
+            sounds.add(R.raw.aa1);
+            play(context, sounds.get(ran2), null, 0);
         }
-        play(context, sounds.get(ran2), null, 0);
     }
     public void closeTimer() {
         stop = false;

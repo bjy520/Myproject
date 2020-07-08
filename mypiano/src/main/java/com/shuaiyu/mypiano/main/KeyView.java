@@ -130,7 +130,7 @@ public class KeyView extends View {
                                     if(DaoUtils.getInstance().querySound(eventX)!=null&&DaoUtils.getInstance().querySound(eventX).size()==1){
                                         spu.play(context,0, DaoUtils.getInstance().querySound(eventX).get(0).getSoundPath(), 1);
                                     }else {
-                                        spu.play(context, R.raw.shache, "", 0);
+                                        spu.play(context, R.raw.aa1, "", 0);
                                     }
 
                                 }

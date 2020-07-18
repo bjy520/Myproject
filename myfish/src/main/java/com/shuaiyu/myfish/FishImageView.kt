@@ -13,7 +13,7 @@ class FishImageView : Drawable() {
     private var middlePoint: PointF? = null
 
     // 鱼的主要朝向角度
-    private val fishMainAngle = 90f
+    private val fishMainAngle = 30f
 
     // 绘制鱼头的半径
     private val HEAD_RADIUS = 100f
@@ -110,9 +110,53 @@ class FishImageView : Drawable() {
             false
         )
 
+        // 尾巴
+        makeTriangel(canvas, mpaint!!, FIND_TRIANGLE_LENGTH, BIG_CIRCLE_RADIUS, fishAngle)
+        makeTriangel(
+            canvas, mpaint!!, FIND_TRIANGLE_LENGTH - 10,
+            BIG_CIRCLE_RADIUS - 20, fishAngle
+        )
+        makeBody(canvas,headPoint!!,bodyBottomCenterPoint!!,fishAngle)
     }
 
 
+    private fun makeBody(
+        canvas: Canvas,
+        headPoint: PointF,
+        bodyBottomCenterPoint: PointF,
+        fishAngle: Float
+    ) {
+        // 身体的四个点求出来
+        val topLeftPoint = calculatePoint(headPoint, HEAD_RADIUS, fishAngle + 90)
+        val topRightPoint = calculatePoint(headPoint, HEAD_RADIUS, fishAngle - 90)
+        val bottomLeftPoint = calculatePoint(
+            bodyBottomCenterPoint, BIG_CIRCLE_RADIUS,
+            fishAngle + 90
+        )
+        val bottomRightPoint = calculatePoint(
+            bodyBottomCenterPoint, BIG_CIRCLE_RADIUS,
+            fishAngle - 90
+        )
+
+        // 二阶贝塞尔曲线的控制点 --- 决定鱼的胖瘦
+        val controlLeft = calculatePoint(
+            headPoint, BODY_LENGTH * 0.56f,
+            fishAngle + 130
+        )
+        val controlRight = calculatePoint(
+            headPoint, BODY_LENGTH * 0.56f,
+            fishAngle - 130
+        )
+        path.reset()
+        path.moveTo(topLeftPoint!!.x,topLeftPoint!!.y)
+        path.quadTo( controlLeft!!.x, controlLeft.y,bottomLeftPoint!!.x, bottomLeftPoint.y)
+        path.lineTo(bottomRightPoint!!.x,bottomRightPoint!!.y)
+        path.quadTo(controlRight!!.x, controlRight.y,topRightPoint!!.x, topRightPoint.y)
+        canvas.drawPath(path,paint)
+    }
+    /**
+     * 三角  鱼尾
+     */
     private fun makeTriangel(
         canvas: Canvas, startPoint: PointF, findCenterLength: Float,
         findEdgeLength: Float, fishAngle: Float

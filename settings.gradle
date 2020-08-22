@@ -1,3 +1,4 @@
+include ':stickynote'
 include ':myfish'
 include ':businesscard'
 include ':mymoveimage'

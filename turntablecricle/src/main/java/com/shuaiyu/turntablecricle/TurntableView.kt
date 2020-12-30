@@ -1,13 +1,20 @@
 package com.shuaiyu.turntablecricle
 
+import android.animation.ValueAnimator
+import android.content.ContentValues.TAG
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
+import android.text.TextUtils
+import android.util.Log
+import android.view.MotionEvent
+import android.view.MotionEvent.ACTION_DOWN
 import android.view.View
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
-class TurntableView(context: Context) : View(context) {
+class TurntableView(context: Context) : View(context)  {
     private val mColors = intArrayOf(
         Color.BLUE, Color.DKGRAY, Color.CYAN, Color.RED, Color.GREEN
     )
@@ -17,6 +24,9 @@ class TurntableView(context: Context) : View(context) {
     var h = 0
     var currentStartAngle = 0f  //开始角度
     var r = 0f  //半径
+    var sr= 0f //里面按钮的半径   且是指尖的高度
+    var showText :String ="开始旋转"
+    val path = Path()
     private var viewDatas //数据集
             : List<ViewData>? = null
     init {
@@ -25,7 +35,9 @@ class TurntableView(context: Context) : View(context) {
             style = Paint.Style.FILL
             textSize = 30f
             isAntiAlias = true
+            strokeWidth = 4f;
         }
+        path.fillType = Path.FillType.EVEN_ODD
     }
 
     public fun setData(viewDatas: List<ViewData>){
@@ -39,6 +51,7 @@ class TurntableView(context: Context) : View(context) {
         this.w = w
         this.h = h
         r= (w.coerceAtMost(h) / 2).toFloat()
+        sr=r/4
     }
 
 
@@ -46,7 +59,7 @@ class TurntableView(context: Context) : View(context) {
         super.onDraw(canvas)
         //移动坐标到中间
         canvas?.translate((w / 2).toFloat(), (h / 2).toFloat())
-        //设置将要用来画扇形的矩形的轮廓
+//        //设置将要用来画扇形的矩形的轮廓
         rectF.set(-r, -r, r, r)
 
         viewDatas?.forEach {
@@ -55,12 +68,12 @@ class TurntableView(context: Context) : View(context) {
             //绘制扇形上文字
             val textAngle: Float = currentStartAngle + it.angle / 2 //计算文字位置角度
 
-            mPaint.setColor(Color.BLACK)
+            mPaint.color = Color.BLACK
             val x =
-                (r / 2 * Math.cos(textAngle * Math.PI / 180)).toFloat() //计算文字位置坐标
+                (r / 2 * cos(textAngle * Math.PI / 180)).toFloat() //计算文字位置坐标
 
-            val y = (r / 2 * Math.sin(textAngle * Math.PI / 180)).toFloat()
-            mPaint.setColor(Color.BLACK) //文字颜色
+            val y = (r / 2 * sin(textAngle * Math.PI / 180)).toFloat()
+            mPaint.color = Color.BLACK //文字颜色
             if(it.name!=null) {
                 canvas?.drawText(it.name!!, x, y, mPaint);    //绘制文字
             }
@@ -68,11 +81,53 @@ class TurntableView(context: Context) : View(context) {
 
 
         }
+        mPaint.color = Color.WHITE
+        canvas?.drawCircle(0f, 0f, sr, mPaint)
+        mPaint.color = Color.BLACK
+        canvas?.drawText(showText, x - 50f, y, mPaint);    //绘制文字
+        if(TextUtils.equals(showText,"开始旋转")){
+            drawTriangle(canvas)
+        }
+
+
+
+
+
+
 
     }
 
+    /**
+     * 画指针
+     *///70 135
+    private fun drawTriangle(canvas: Canvas?) {
+        var a=60.0
+        var b=300.0
+        val pointa = getPoint(a)
+        val pointb = getPoint(b)
+        path.moveTo(pointa.x,-pointa.y)
+        path.lineTo(0f,-2*sr)
+        path.lineTo(-pointb.x,-pointb.y)
+        path.lineTo(pointa.x,-pointa.y)
+        path.close();
+        mPaint.color=Color.WHITE
+        canvas?.drawPath(path,mPaint)
+        Log.e(TAG, "drawTriangle: " )
+    }
+
+    private fun getPoint(x: Double) :PointF{
+        var x = cos(Math.toRadians(x)) * sr//根据余弦计算X坐标
+        var y = sin(Math.toRadians(x)) * sr;//根据正弦dao计算y坐标
+        return PointF(x.toFloat(), y.toFloat())
+    }
+
+    private fun getPoint1(f:PointF,x: Double) :PointF{
+        var x = cos(Math.toRadians(x)) * sr//根据余弦计算X坐标
+        var y = sin(Math.toRadians(x)) * sr;//根据正弦dao计算y坐标
+        return PointF(x.toFloat()+f.x, y.toFloat()+f.y)
+    }
     private fun initData() {
-        if (null == viewDatas || viewDatas!!.size == 0) {
+        if (null == viewDatas || viewDatas!!.isEmpty()) {
             return
         }
         var sumValue = 0f //数值和
@@ -86,5 +141,47 @@ class TurntableView(context: Context) : View(context) {
             data.percentage = percentage
             data.angle = angle
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+
+
+
+
+
+
+        when(event?.action){
+
+            ACTION_DOWN -> {
+
+                // event.getY  不带状态栏   getrawY 有状态栏
+                val let = sqrt(((event.y - (h / 2)).pow(2)) + ((event.x - (w / 2))).pow(2))
+                if (let < sr) {
+                    Log.e(TAG, "--------------点击了开始")
+                    val ofFloat = ValueAnimator.ofFloat(0f, 360f * 5)
+                    ofFloat.run {
+                        duration = 5000
+                        addUpdateListener {
+                            val animatedValue = it.animatedValue
+                            currentStartAngle = animatedValue as Float
+                            if (currentStartAngle < 360f * 5) {
+                                showText = "旋转中"
+                            } else {
+                                showText = "开始旋转"
+                            }
+
+                            invalidate()
+                        }
+                    }
+                    ofFloat.start();
+                } else {
+                    Log.e(TAG, "--------------点击了其他位置")
+                }
+
+            }
+
+        }
+        return super.onTouchEvent(event)
     }
 }

@@ -17,9 +17,11 @@
             <option value="$PROJECT_DIR$/mymoveimage" />
             <option value="$PROJECT_DIR$/mypiano" />
             <option value="$PROJECT_DIR$/stickynote" />
+            <option value="$PROJECT_DIR$/turntablecricle" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
+        <option name="useQualifiedModuleNames" value="true" />
       </GradleProjectSettings>
     </option>
   </component>

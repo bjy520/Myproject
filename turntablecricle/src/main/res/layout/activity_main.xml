@@ -12,21 +12,51 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-<!--        <com.shuaiyu.turntablecricle.TurntableView-->
-<!--            android:id="@+id/turntableview"-->
-<!--            android:layout_width="170dp"-->
-<!--            android:layout_height="170dp"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintLeft_toLeftOf="parent"-->
-<!--            app:layout_constraintRight_toRightOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent">-->
+        <!--        <com.shuaiyu.turntablecricle.TurntableView-->
+        <!--            android:id="@+id/turntableview"-->
+        <!--            android:layout_width="170dp"-->
+        <!--            android:layout_height="170dp"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--            app:layout_constraintRight_toRightOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent">-->
 
-        <LinearLayout
-            android:id="@+id/me"
+        <com.shuaiyu.turntablecricle.TurntableView
+            android:id="@+id/turntable"
             android:layout_width="match_parent"
+            android:layout_height="290dp"
+            tools:ignore="MissingConstraints"></com.shuaiyu.turntablecricle.TurntableView>
+
+        <TextView
+            android:id="@+id/tv_num"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints"
-            android:orientation="vertical"></LinearLayout>
+            android:text="请输入显示文字"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/turntable"></TextView>
+
+        <EditText
+            android:id="@+id/edt_num"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toEndOf="@id/tv_num"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/turntable"></EditText>
+
+        <Button
+            android:id="@+id/btn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edt_num"
+            app:layout_constraintRight_toRightOf="parent"></Button>
+        <Button
+            android:id="@+id/btn_clean"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edt_num"
+            app:layout_constraintRight_toRightOf="@+id/btn_add"></Button>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

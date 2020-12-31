@@ -7,35 +7,23 @@ import androidx.databinding.DataBindingUtil
 import com.shuaiyu.turntablecricle.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-
+    var asd: MutableList<ViewData> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        setContentView(R.layout.activity_main)
         val contentView =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        val viewData = ViewData()
 
 
-
-
-
-        viewData.apply {
-            value=30
-            name="30%"
-            color= resources.getColor(R.color.asd)
+        contentView.btnAdd.setOnClickListener {
+            val viewData = ViewData()
+            viewData.name = contentView.edtNum.text.toString()
+            asd.add(viewData)
+            contentView.turntable.setData(asd)
         }
-        val viewData1 = ViewData()
-        viewData1.apply {
-            value=20
-            name="30%"
-            color= resources.getColor(R.color.yellow)
+        contentView.btnClean.setOnClickListener{
+            asd.clear()
+            contentView.turntable.setData(asd)
         }
-        val listOf = listOf(viewData, viewData1)
-        val mutableListOf = mutableListOf<ViewData>()
-        mutableListOf.add(viewData1)
-        mutableListOf.add(viewData)
-        val turntableView = TurntableView(this)
-        turntableView.setData(listOf)
-        contentView.me.addView(turntableView)
     }
 }

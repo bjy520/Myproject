@@ -5,6 +5,7 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.*
 import android.text.TextUtils
+import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
@@ -14,7 +15,8 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class TurntableView(context: Context) : View(context)  {
+class TurntableView : View {
+
     private val mColors = intArrayOf(
         Color.BLUE, Color.DKGRAY, Color.CYAN, Color.RED, Color.GREEN
     )
@@ -22,13 +24,21 @@ class TurntableView(context: Context) : View(context)  {
     var rectF: RectF = RectF()
     var w = 0
     var h = 0
-    var currentStartAngle = 0f  //开始角度
+    var currentStartAngle = 270f  //开始角度
     var r = 0f  //半径
-    var sr= 0f //里面按钮的半径   且是指尖的高度
-    var showText :String ="开始旋转"
-    val path = Path()
-    private var viewDatas //数据集
-            : List<ViewData>? = null
+    var sr = 0f //里面按钮的半径   且是指尖的高度
+    var showText: String = "开始旋转"
+    private val path = Path()
+    private var viewDatas: List<ViewData>? = null
+
+    constructor(context: Context?) : super(context)
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    )
+
     init {
         mPaint.run {
             color = Color.WHITE
@@ -40,8 +50,9 @@ class TurntableView(context: Context) : View(context)  {
         path.fillType = Path.FillType.EVEN_ODD
     }
 
-    public fun setData(viewDatas: List<ViewData>){
-        this.viewDatas=viewDatas
+    fun setData(viewDatas: List<ViewData>?) {
+        this.viewDatas=null
+        this.viewDatas = viewDatas
         initData()
         invalidate()
     }
@@ -50,8 +61,8 @@ class TurntableView(context: Context) : View(context)  {
         super.onSizeChanged(w, h, oldw, oldh)
         this.w = w
         this.h = h
-        r= (w.coerceAtMost(h) / 2).toFloat()
-        sr=r/4
+        r = (w.coerceAtMost(h) / 2).toFloat()
+        sr = r / 4
     }
 
 
@@ -59,7 +70,6 @@ class TurntableView(context: Context) : View(context)  {
         super.onDraw(canvas)
         //移动坐标到中间
         canvas?.translate((w / 2).toFloat(), (h / 2).toFloat())
-//        //设置将要用来画扇形的矩形的轮廓
         rectF.set(-r, -r, r, r)
 
         viewDatas?.forEach {
@@ -74,100 +84,74 @@ class TurntableView(context: Context) : View(context)  {
 
             val y = (r / 2 * sin(textAngle * Math.PI / 180)).toFloat()
             mPaint.color = Color.BLACK //文字颜色
-            if(it.name!=null) {
-                canvas?.drawText(it.name!!, x, y, mPaint);    //绘制文字
+            if (it.name != null) {
+                canvas?.drawText(it.name!!, x, y, mPaint);    //绘制文字s
+                currentStartAngle += it.angle;
+
+
             }
-            currentStartAngle += it.angle;
-
-
         }
         mPaint.color = Color.WHITE
         canvas?.drawCircle(0f, 0f, sr, mPaint)
         mPaint.color = Color.BLACK
         canvas?.drawText(showText, x - 50f, y, mPaint);    //绘制文字
-        if(TextUtils.equals(showText,"开始旋转")){
-            drawTriangle(canvas)
-        }
-
-
-
-
-
-
-
+        drawTriangle(canvas)
     }
 
     /**
      * 画指针
      *///70 135
     private fun drawTriangle(canvas: Canvas?) {
-        var a=60.0
-        var b=300.0
+        var a = 70.0
         val pointa = getPoint(a)
-        val pointb = getPoint(b)
-        path.moveTo(pointa.x,-pointa.y)
-        path.lineTo(0f,-2*sr)
-        path.lineTo(-pointb.x,-pointb.y)
-        path.lineTo(pointa.x,-pointa.y)
-        path.close();
-        mPaint.color=Color.WHITE
-        canvas?.drawPath(path,mPaint)
-        Log.e(TAG, "drawTriangle: " )
+        path.reset()
+        path.moveTo(pointa.x, -pointa.y)
+        path.lineTo(0f, -2 * sr)
+        path.lineTo(-pointa.x, -pointa.y)
+        path.lineTo(pointa.x, -pointa.y)
+        path.close()
+        mPaint.color = Color.WHITE
+        canvas?.drawPath(path, mPaint)
     }
 
-    private fun getPoint(x: Double) :PointF{
-        var x = cos(Math.toRadians(x)) * sr//根据余弦计算X坐标
+    private fun getPoint(x: Double): PointF {
+        var xy = cos(Math.toRadians(x)) * sr//根据余弦计算X坐标
         var y = sin(Math.toRadians(x)) * sr;//根据正弦dao计算y坐标
-        return PointF(x.toFloat(), y.toFloat())
+        return PointF(xy.toFloat(), y.toFloat())
     }
 
-    private fun getPoint1(f:PointF,x: Double) :PointF{
-        var x = cos(Math.toRadians(x)) * sr//根据余弦计算X坐标
-        var y = sin(Math.toRadians(x)) * sr;//根据正弦dao计算y坐标
-        return PointF(x.toFloat()+f.x, y.toFloat()+f.y)
-    }
     private fun initData() {
         if (null == viewDatas || viewDatas!!.isEmpty()) {
             return
         }
-        var sumValue = 0f //数值和
         for (i in viewDatas!!.indices) {
-            val viewData = viewDatas!![i]
-            sumValue += viewData.value
-        }
-        for (data in viewDatas!!) {
-            val percentage = data.value / sumValue //计算百分比
-            val angle = percentage * 360 //对应的角度
-            data.percentage = percentage
-            data.angle = angle
+            val angle = 360 / (viewDatas!!.size) //对应的角度
+            viewDatas!![i].angle = angle.toFloat()
+
+            viewDatas!![i].color = if (i % 2 == 0) mColors[0] else mColors[1]
         }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-
-
-
-
-
-
-
-        when(event?.action){
-
+        when (event?.action) {
             ACTION_DOWN -> {
-
+                var index = 0f
                 // event.getY  不带状态栏   getrawY 有状态栏
                 val let = sqrt(((event.y - (h / 2)).pow(2)) + ((event.x - (w / 2))).pow(2))
                 if (let < sr) {
                     Log.e(TAG, "--------------点击了开始")
-                    val ofFloat = ValueAnimator.ofFloat(0f, 360f * 5)
+                    index = currentStartAngle
+                    val ofFloat =
+                        ValueAnimator.ofFloat(currentStartAngle, currentStartAngle + 360f * 5)
                     ofFloat.run {
                         duration = 5000
                         addUpdateListener {
                             val animatedValue = it.animatedValue
                             currentStartAngle = animatedValue as Float
-                            if (currentStartAngle < 360f * 5) {
+                            if (currentStartAngle - (360f * 5) < index) {
                                 showText = "旋转中"
                             } else {
+                                currentStartAngle %= 360f
                                 showText = "开始旋转"
                             }
 

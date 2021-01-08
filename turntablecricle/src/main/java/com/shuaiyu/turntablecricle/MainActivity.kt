@@ -1,8 +1,8 @@
 package com.shuaiyu.turntablecricle
 
-import android.graphics.Color.red
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.shuaiyu.turntablecricle.databinding.ActivityMainBinding
 
@@ -15,15 +15,23 @@ class MainActivity : AppCompatActivity() {
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
 
-        contentView.btnAdd.setOnClickListener {
-            val viewData = ViewData()
-            viewData.name = contentView.edtNum.text.toString()
-            asd.add(viewData)
-            contentView.turntable.setData(asd)
-        }
-        contentView.btnClean.setOnClickListener{
-            asd.clear()
-            contentView.turntable.setData(asd)
+        contentView.apply {
+            btnAdd.setOnClickListener {
+                val viewData = ViewData()
+                viewData.name = contentView.edtNum.text.toString()
+                asd.add(viewData)
+                contentView.turntable.setData(asd)
+            }
+            btnClean.setOnClickListener{
+                asd.clear()
+                contentView.turntable.setData(asd)
+
+            }
+            turntable.setListener(object :TurntableView.getPointText{
+                override fun getText(pointText: String?) {
+                    Toast.makeText(this@MainActivity,pointText,Toast.LENGTH_SHORT).show()
+                }
+            })
         }
     }
 }

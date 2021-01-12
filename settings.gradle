@@ -1,3 +1,4 @@
+include ':hiltdemo'
 include ':turntablecricle'
 include ':stickynote'
 include ':myfish'

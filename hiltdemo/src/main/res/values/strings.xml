@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">HiltDemo</string>
+    <string name="hilt">使用hilt</string>
+    <string name="daili">代理</string>
+</resources>

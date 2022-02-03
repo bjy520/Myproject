@@ -7,5 +7,7 @@ class MyApp :Application() {
     override fun onCreate() {
         super.onCreate()
         ToastUtils.init(this);
+        
     }
+    fun getConetxt() = this
 }

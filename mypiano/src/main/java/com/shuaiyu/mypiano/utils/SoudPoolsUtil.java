@@ -39,13 +39,15 @@ public class SoudPoolsUtil {
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            // TODO Auto-generated method stub
-            // 要做的事情
 
-            if (size ==1) {
+
+            if (size <6) {
                 playPianoSound();
             } else {
                List<Dao> daos= DaoUtils.queryAll();
+               if(daos == null ||daos.size()==0){
+                   return;
+               }
                 Random random2 = new Random();
                 int ran2;
                 ran2 = random2.nextInt(daos.size());

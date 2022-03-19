@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_main.*
-
+// 做一个毛玻璃效果
 class MainActivity : AppCompatActivity() {
     var myMoveView: MyMoveView? = null
     override fun onCreate(savedInstanceState: Bundle?) {

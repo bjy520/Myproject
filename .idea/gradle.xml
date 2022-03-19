@@ -13,7 +13,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/businesscard" />
+            <option value="$PROJECT_DIR$/gradualview" />
             <option value="$PROJECT_DIR$/hiltdemo" />
             <option value="$PROJECT_DIR$/myfish" />
             <option value="$PROJECT_DIR$/mymoveimage" />

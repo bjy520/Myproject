@@ -3,6 +3,7 @@ package com.bjy520.gradualview
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 
 
@@ -67,8 +68,8 @@ class NenoTextview : View {
                     LinearGradient(
                         0f,
                         0f,
+                        mViewWidth,
                         0f,
-                        mViewHeight,
                         it,
                         null,
                         Shader.TileMode.CLAMP
@@ -93,6 +94,7 @@ class NenoTextview : View {
             }
         }
         if (mMatrix != null && mSlide) {
+            Log.e("TAG", "onDraw: ", )
             //利用 Matrix 的平移动作实现霓虹灯的效果，这里是每次滚动1/10
             mTranslate += (mViewWidth / 10).toInt()
             mTranslateH += (mViewHeight / 10).toInt()

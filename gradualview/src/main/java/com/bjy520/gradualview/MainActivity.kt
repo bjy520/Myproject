@@ -29,9 +29,10 @@ class MainActivity : AppCompatActivity() {
             setColor(intArray)
         }
         findViewById<NenoTextview>(R.id.n4).apply {
+            setSlide(true)
+
             setText("帅玉")
             setHasColors(true,intArray)
-            setSlide(true)
             setColor(intArray)
         }
         findViewById<NenoTextview>(R.id.n5).apply {
